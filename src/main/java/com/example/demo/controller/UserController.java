@@ -34,4 +34,26 @@ public class UserController {
     @DeleteMapping("/user/{userId}")
     public void deleteById(@PathVariable long userId) {
     }
+    
+    @RequestMapping("/toUserList")
+    public String toUserList(){
+        return "userList";
+    }
+    
+     @RequestMapping("/getUserList")
+    @ResponseBody
+    public String getUserList(Integer page,Integer limit){
+        LayuiResponseJSONBean layuiResponseJSONBean;
+        page = page == null ? 1 : page;
+        limit = limit == null ? 10 : limit;
+        Page pages = new Page(page,limit);
+        Page<Map> userList = userService.getUserList(pages);
+        List<Map> list = userList.getRecords();
+        //总数
+        Integer total = userList.getTotal();
+        layuiResponseJSONBean = LayuiResponseJSONBean.getSuccessClientResponseJSONBean();
+        layuiResponseJSONBean.setCount(total);
+        layuiResponseJSONBean.setData(list);
+        return layuiResponseJSONBean.toJSONString();
+    }
 }
